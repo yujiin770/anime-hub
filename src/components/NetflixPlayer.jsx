@@ -39,9 +39,9 @@ export default function NetflixPlayer({ anime, onClose }) {
         </button>
       </div>
 
-      <div className="flex h-full flex-col lg:flex-row">
-        <div className="flex flex-1 flex-col bg-black">
-          <div className="relative flex flex-1 items-center justify-center overflow-hidden bg-black">
+      <div className="flex h-full flex-col overflow-hidden lg:flex-row">
+        <div className="flex min-h-[46vh] flex-1 flex-col bg-black lg:min-h-0">
+          <div className="relative flex min-h-[320px] flex-1 items-center justify-center overflow-hidden bg-black">
             {anime?.image && (
               <img
                 src={anime.image}
@@ -73,7 +73,7 @@ export default function NetflixPlayer({ anime, onClose }) {
             )}
 
             <div className="absolute bottom-4 left-4 right-4 z-10 rounded-xl border border-white/10 bg-black/60 p-3">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handlePlayEpisode}
@@ -114,7 +114,7 @@ export default function NetflixPlayer({ anime, onClose }) {
           </div>
         </div>
 
-        <aside className="flex max-h-screen flex-col border-l border-white/10 bg-slate-900/90 lg:w-96">
+        <aside className="flex max-h-[42vh] flex-col border-t border-white/10 bg-slate-900/90 lg:max-h-screen lg:w-96 lg:border-l lg:border-t-0">
           <div className="border-b border-white/10 p-4">
             <h3 className="text-lg font-semibold text-white">Episodes</h3>
             <p className="text-sm text-slate-300">{episodes.length} available</p>

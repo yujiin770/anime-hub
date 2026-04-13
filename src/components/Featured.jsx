@@ -81,7 +81,7 @@ export default function Featured() {
 
               <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-200">
                 <span className="rounded-full bg-white/10 px-2.5 py-1">{anime.episodes || '?'} eps</span>
-                <span className="rounded-full bg-white/10 px-2.5 py-1">{anime.rating > 0 ? anime.rating.toFixed(1) : 'N/A'} score</span>
+                <span className="rounded-full bg-white/10 px-2.5 py-1">{anime.rating > 0 ? anime.rating.toFixed(1) : 'N/A'} Rate</span>
               </div>
 
               <button

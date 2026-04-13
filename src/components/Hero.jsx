@@ -3,25 +3,29 @@ import { Play, Info, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { useTrendingAnime } from '../hooks/useAnime'
 import NetflixPlayer from './NetflixPlayer'
 
-export default function Hero() {
+export default function Hero({ selectedGenre = 'All' }) {
   const { anime: allAnime, loading } = useTrendingAnime()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [autoPlay, setAutoPlay] = useState(true)
   const [showPlayer, setShowPlayer] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
 
-  const safeIndex = allAnime.length > 0 ? Math.min(currentIndex, allAnime.length - 1) : 0
-  const featured = allAnime[safeIndex] || null
+  const filteredAnime = selectedGenre === 'All'
+    ? allAnime
+    : allAnime.filter((anime) => anime.genre?.includes(selectedGenre))
+
+  const safeIndex = filteredAnime.length > 0 ? Math.min(currentIndex, filteredAnime.length - 1) : 0
+  const featured = filteredAnime[safeIndex] || null
 
   useEffect(() => {
-    if (!autoPlay || loading || allAnime.length === 0) return
+    if (!autoPlay || loading || filteredAnime.length === 0) return
 
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % allAnime.length)
+      setCurrentIndex((prev) => (prev + 1) % filteredAnime.length)
     }, 7000)
 
     return () => clearInterval(interval)
-  }, [autoPlay, loading, allAnime.length])
+  }, [autoPlay, loading, filteredAnime.length])
 
   return (
     <section id="hero" className="relative mx-auto mt-4 max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -43,11 +47,11 @@ export default function Hero() {
         <div className="relative z-10 flex h-full items-end p-6 sm:p-10">
           <div className="max-w-2xl animate-fade-in-up">
             <span className="inline-flex items-center rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-100">
-              Top Picks {allAnime.length > 0 ? `${safeIndex + 1}/${allAnime.length}` : ''}
+              Top Picks {filteredAnime.length > 0 ? `${safeIndex + 1}/${filteredAnime.length}` : ''}
             </span>
 
             <h1 className="mt-4 font-heading text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl">
-              {loading ? 'Loading anime lineup...' : featured?.title || 'Discover your next favorite anime'}
+              {loading ? 'Loading anime lineup...' : featured?.title || 'No anime found for this genre'}
             </h1>
 
             <div className="mt-6 flex flex-wrap gap-3">
@@ -74,9 +78,9 @@ export default function Hero() {
         <button
           onClick={() => {
             setAutoPlay(false)
-            setCurrentIndex((prev) => (prev - 1 + allAnime.length) % allAnime.length)
+            setCurrentIndex((prev) => (prev - 1 + filteredAnime.length) % filteredAnime.length)
           }}
-          disabled={loading || allAnime.length < 2}
+          disabled={loading || filteredAnime.length < 2}
           className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/20 bg-slate-950/70 p-2 text-white transition hover:bg-slate-900 disabled:opacity-40"
           aria-label="Previous anime"
         >
@@ -86,18 +90,18 @@ export default function Hero() {
         <button
           onClick={() => {
             setAutoPlay(false)
-            setCurrentIndex((prev) => (prev + 1) % allAnime.length)
+            setCurrentIndex((prev) => (prev + 1) % filteredAnime.length)
           }}
-          disabled={loading || allAnime.length < 2}
+          disabled={loading || filteredAnime.length < 2}
           className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/20 bg-slate-950/70 p-2 text-white transition hover:bg-slate-900 disabled:opacity-40"
           aria-label="Next anime"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
 
-        {allAnime.length > 1 && (
+        {filteredAnime.length > 1 && (
           <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2">
-            {allAnime.map((entry, idx) => (
+            {filteredAnime.map((entry, idx) => (
               <button
                 key={entry.id}
                 onClick={() => {
