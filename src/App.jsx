@@ -5,16 +5,48 @@ import Hero from './components/Hero'
 import AnimeGrid from './components/AnimeGrid'
 import Featured from './components/Featured'
 
+const genreOptions = [
+  'All',
+  'Action',
+  'Adventure',
+  'Comedy',
+  'Drama',
+  'Fantasy',
+  'Horror',
+  'Mystery',
+  'Romance',
+  'Sci-Fi',
+  'Slice of Life',
+  'Sports',
+  'Supernatural',
+  'Thriller'
+]
+
 function App() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedGenre, setSelectedGenre] = useState('All')
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950">
-      <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      <Hero />
-      <Featured />
-      <AnimeGrid searchQuery={searchQuery} selectedGenre={selectedGenre} setSelectedGenre={setSelectedGenre} />
+    <div className="relative min-h-screen overflow-x-hidden bg-[var(--bg)] text-white">
+      <div className="pointer-events-none fixed inset-0 -z-10">
+        <div className="absolute -top-28 -left-16 h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl" />
+        <div className="absolute top-1/3 -right-24 h-80 w-80 rounded-full bg-rose-500/15 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-indigo-500/15 blur-3xl" />
+      </div>
+
+      <Header
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        selectedGenre={selectedGenre}
+        setSelectedGenre={setSelectedGenre}
+        genreOptions={genreOptions}
+      />
+
+      <main className="pt-20 sm:pt-24">
+        <Hero selectedGenre={selectedGenre} />
+        <Featured />
+        <AnimeGrid searchQuery={searchQuery} />
+      </main>
     </div>
   )
 }

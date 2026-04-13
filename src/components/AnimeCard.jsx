@@ -1,93 +1,76 @@
-import { Play, Info } from 'lucide-react'
 import { useState } from 'react'
 import NetflixPlayer from './NetflixPlayer'
+import { Play, Info } from 'lucide-react'
 
 export default function AnimeCard({ anime }) {
   const [showPlayer, setShowPlayer] = useState(false)
 
   const handleInfo = () => {
-    alert(`${anime.title}\n\nRating: ${anime.rating}/10\nEpisodes: ${anime.episodes || 'Unknown'}\nStatus: ${anime.status}\nGenres: ${anime.genre.join(', ')}`)
+    alert([
+      anime.title,
+      `Rating: ${anime.rating > 0 ? anime.rating.toFixed(1) : 'N/A'}/10`,
+      `Episodes: ${anime.episodes || 'Unknown'}`,
+      `Status: ${anime.status || 'Unknown'}`,
+      `Genres: ${anime.genre?.join(', ') || 'N/A'}`
+    ].join('\n'))
   }
 
   return (
     <>
-      <div className="group relative bg-gray-800 rounded-lg overflow-hidden cursor-pointer hover:transform hover:scale-105 transition duration-300 flex flex-col h-full">
-        {/* Image Container */}
-        <div className="relative h-64 md:h-80 bg-gradient-to-b from-gray-700 to-gray-900 overflow-hidden">
+      <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900/85 shadow-lg shadow-black/20 transition hover:-translate-y-1">
+        <div className="relative h-64 overflow-hidden bg-slate-800">
           {anime.image ? (
             <img
               src={anime.image}
               alt={anime.title}
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition duration-300"
+              className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
               onError={(e) => {
-                e.target.style.display = 'none'
+                e.currentTarget.style.display = 'none'
               }}
             />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-600 to-gray-800" />
+            <div className="h-full w-full bg-slate-700" />
           )}
 
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
 
-          {/* Play Button */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-            <div className="bg-red-600 hover:bg-red-700 p-3 rounded-full">
-              <Play className="w-6 h-6 fill-white text-white" />
-            </div>
-          </div>
-
-          {/* Badge */}
-          <div className="absolute top-2 right-2 px-2 py-1 bg-red-600 text-white text-xs font-bold rounded">
+          <span className="absolute right-2 top-2 rounded-full bg-cyan-300 px-2.5 py-1 text-xs font-bold text-slate-950">
             {anime.year || 'N/A'}
-          </div>
+          </span>
 
-          {/* Rating */}
-          {anime.rating > 0 && (
-            <div className="absolute bottom-2 left-2 bg-black/70 px-2 py-1 rounded text-yellow-400 text-sm font-semibold">
-              ★ {anime.rating.toFixed(1)}
-            </div>
-          )}
+          <div className="absolute bottom-2 left-2 rounded-full bg-black/70 px-2.5 py-1 text-xs font-semibold text-cyan-200">
+            {anime.rating > 0 ? anime.rating.toFixed(1) : 'N/A'} score
+          </div>
         </div>
 
-        {/* Info */}
-        <div className="p-4 flex-grow flex flex-col">
-          <h3 className="font-bold text-white text-sm md:text-base mb-1 line-clamp-2 group-hover:text-red-500 transition">
-            {anime.title}
-          </h3>
-          <p className="text-gray-400 text-xs mb-2 line-clamp-1">
-            {anime.genre.slice(0, 2).join(', ') || 'N/A'}
-          </p>
-          <p className="text-gray-500 text-xs line-clamp-2 flex-grow">
-            {anime.description || 'No description available'}
-          </p>
+        <div className="flex flex-1 flex-col p-4">
+          <h3 className="line-clamp-2 text-base font-semibold text-white">{anime.title}</h3>
+          <p className="mt-1 line-clamp-1 text-xs text-slate-300">{anime.genre?.slice(0, 2).join(', ') || 'Unknown genre'}</p>
 
-          {/* Stats */}
-          <div className="mt-3 pt-3 border-t border-gray-700 flex justify-between text-xs text-gray-400">
-            <span>{anime.episodes || '?'} Episodes</span>
-            <span className="capitalize">{anime.status || 'Unknown'}</span>
+          <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3 text-xs text-slate-300">
+            <span>{anime.episodes || '?'} episodes</span>
+            <span className="truncate pl-2">{anime.status || 'Unknown'}</span>
           </div>
 
-          {/* Buttons */}
           <div className="mt-3 flex gap-2">
             <button
               onClick={() => setShowPlayer(true)}
-              className="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-bold py-2 rounded transition active:scale-95"
+              className="inline-flex flex-1 items-center justify-center gap-1 rounded-xl bg-cyan-400 py-2 text-xs font-semibold text-slate-950 transition hover:bg-cyan-300"
             >
-              Episodes
+              <Play className="h-3.5 w-3.5 fill-current" />
+              Play
             </button>
-            <button 
+            <button
               onClick={handleInfo}
-              className="flex-1 bg-gray-700 hover:bg-gray-600 text-white text-xs sm:text-sm font-bold py-2 rounded transition flex items-center justify-center gap-1 active:scale-95"
+              className="inline-flex flex-1 items-center justify-center gap-1 rounded-xl border border-white/15 bg-white/5 py-2 text-xs font-semibold text-white transition hover:bg-white/10"
             >
-              <Info className="w-4 h-4" />
+              <Info className="h-3.5 w-3.5" />
               Info
             </button>
           </div>
         </div>
-      </div>
+      </article>
 
-      {/* Netflix Player */}
       {showPlayer && (
         <NetflixPlayer
           anime={anime}
@@ -97,4 +80,3 @@ export default function AnimeCard({ anime }) {
     </>
   )
 }
-

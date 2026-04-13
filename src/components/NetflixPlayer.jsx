@@ -1,194 +1,166 @@
 import { useState, useEffect } from 'react'
-import { X, ChevronLeft, ChevronRight, Play as PlayIcon, Volume2, VolumeX, Maximize2 } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, Play as PlayIcon, Volume2, VolumeX, ExternalLink } from 'lucide-react'
 import { useAnimeEpisodes } from '../hooks/useAnime'
 
 export default function NetflixPlayer({ anime, onClose }) {
   const { episodes, loading, error } = useAnimeEpisodes(anime?.id, true)
   const [currentEpisode, setCurrentEpisode] = useState(0)
   const [isMuted, setIsMuted] = useState(false)
-  const [episodePage, setEpisodePage] = useState(0)
 
-  const episodesPerPage = 6
-  const paginatedEpisodes = episodes.slice(
-    episodePage * episodesPerPage,
-    (episodePage + 1) * episodesPerPage
-  )
-  const totalPages = Math.ceil(episodes.length / episodesPerPage)
+  const safeEpisodeIndex = episodes.length > 0 ? Math.min(currentEpisode, episodes.length - 1) : 0
+  const displayEpisode = episodes[safeEpisodeIndex] || null
 
-  const displayEpisode = episodes[currentEpisode] || null
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+    }
 
-  const handlePreviousEpisode = () => {
-    if (currentEpisode > 0) setCurrentEpisode(currentEpisode - 1)
-  }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [onClose])
 
-  const handleNextEpisode = () => {
-    if (currentEpisode < episodes.length - 1) setCurrentEpisode(currentEpisode + 1)
-  }
-
-  const handleSelectEpisode = (index) => {
-    setCurrentEpisode(index)
+  const handlePlayEpisode = () => {
+    if (anime?.url) {
+      window.open(anime.url, '_blank', 'noopener,noreferrer')
+    }
   }
 
   return (
-    <div className="fixed inset-0 bg-black z-50 overflow-hidden">
-      {/* Header with close button */}
-      <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent p-4 sm:p-6 z-20">
+    <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-sm">
+      <div className="absolute left-0 right-0 top-0 z-20 bg-gradient-to-b from-black/90 to-transparent p-4 sm:p-6">
         <button
           onClick={onClose}
-          className="flex items-center gap-2 text-white hover:text-red-500 transition text-sm sm:text-base"
+          className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-black/40 px-3 py-2 text-sm text-white transition hover:bg-black/60"
         >
-          <X className="w-5 h-5 sm:w-6 sm:h-6" />
-          Exit
+          <X className="h-4 w-4" />
+          Close Player
         </button>
       </div>
 
-      <div className="w-full h-full flex flex-col lg:flex-row">
-        {/* Video Player Section */}
-        <div className="flex-1 flex flex-col bg-black">
-          {/* Main Player */}
-          <div className="flex-1 flex items-center justify-center relative bg-black">
-            {displayEpisode ? (
-              <div className="w-full h-full relative group bg-gradient-to-br from-gray-800 to-gray-900">
-                {/* Anime background image */}
-                {anime?.images?.jpg?.image_url && (
-                  <img
-                    src={anime.images.jpg.image_url}
-                    alt={displayEpisode.title}
-                    className="w-full h-full object-cover opacity-30"
-                  />
-                )}
+      <div className="flex h-full flex-col overflow-hidden lg:flex-row">
+        <div className="flex min-h-[46vh] flex-1 flex-col bg-black lg:min-h-0">
+          <div className="relative flex min-h-[320px] flex-1 items-center justify-center overflow-hidden bg-black">
+            {anime?.image && (
+              <img
+                src={anime.image}
+                alt={anime.title}
+                className="absolute inset-0 h-full w-full object-cover opacity-25"
+              />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20" />
 
-                {/* Play overlay */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="mb-4">
-                      <PlayIcon className="w-16 h-16 sm:w-20 sm:h-20 text-red-600 fill-red-600 mx-auto" />
-                    </div>
-                    <p className="text-white text-lg sm:text-2xl font-bold mb-2">{displayEpisode.title}</p>
-                    <p className="text-gray-300 text-xs sm:text-sm mb-6">
-                      Episode {currentEpisode + 1} • {displayEpisode.aired || 'N/A'}
-                    </p>
-                    <button className="px-6 sm:px-8 py-2 sm:py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded transition">
-                      <PlayIcon className="w-5 h-5 fill-white inline mr-2" />
-                      Play Episode
-                    </button>
-                  </div>
-                </div>
-
-                {/* Player Controls */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4 opacity-0 group-hover:opacity-100 transition">
-                  <div className="flex items-center justify-between">
-                    <div className="flex gap-2">
-                      <button className="text-white hover:text-red-500 transition">
-                        <PlayIcon className="w-5 h-5 fill-white" />
-                      </button>
-                      <button
-                        onClick={() => setIsMuted(!isMuted)}
-                        className="text-white hover:text-red-500 transition"
-                      >
-                        {isMuted ? (
-                          <VolumeX className="w-5 h-5" />
-                        ) : (
-                          <Volume2 className="w-5 h-5" />
-                        )}
-                      </button>
-                    </div>
-                    <button className="text-white hover:text-red-500 transition">
-                      <Maximize2 className="w-5 h-5" />
-                    </button>
-                  </div>
-                  {/* Progress bar */}
-                  <div className="mt-2 w-full h-1 bg-gray-700 rounded cursor-pointer hover:h-2 transition">
-                    <div className="h-full bg-red-600 rounded w-1/3"></div>
-                  </div>
-                </div>
+            {displayEpisode || loading ? (
+              <div className="relative z-10 px-6 text-center">
+                <PlayIcon className="mx-auto h-14 w-14 fill-cyan-300 text-cyan-300" />
+                <p className="mt-4 text-xl font-semibold text-white sm:text-2xl">{anime?.title}</p>
+                <p className="mt-1 text-sm text-slate-200">
+                  {loading
+                    ? 'Loading episodes...'
+                    : `Episode ${safeEpisodeIndex + 1}: ${displayEpisode?.title || 'Untitled Episode'}`}
+                </p>
+                <button
+                  onClick={handlePlayEpisode}
+                  className="mt-6 inline-flex items-center gap-2 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
+                >
+                  <PlayIcon className="h-4 w-4 fill-current" />
+                  Play
+                </button>
               </div>
             ) : (
-              <div className="text-center text-gray-400">
-                {loading ? 'Loading episodes...' : error ? 'Error loading episodes' : 'No episodes available'}
-              </div>
+              <p className="relative z-10 text-sm text-slate-300">{error ? 'Error loading episodes' : 'No episodes available'}</p>
             )}
+
+            <div className="absolute bottom-4 left-4 right-4 z-10 rounded-xl border border-white/10 bg-black/60 p-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handlePlayEpisode}
+                    className="rounded-lg p-2 text-white transition hover:bg-white/10"
+                    aria-label="Play"
+                  >
+                    <PlayIcon className="h-4 w-4 fill-current" />
+                  </button>
+                  <button
+                    onClick={() => setIsMuted((prev) => !prev)}
+                    className="rounded-lg p-2 text-white transition hover:bg-white/10"
+                    aria-label={isMuted ? 'Unmute' : 'Mute'}
+                  >
+                    {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                  </button>
+                </div>
+
+                {anime?.url && (
+                  <a
+                    href={anime.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 rounded-lg border border-white/20 px-3 py-1.5 text-xs text-white transition hover:bg-white/10"
+                  >
+                    Official Page
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                )}
+              </div>
+            </div>
           </div>
 
-          {/* Episode Info */}
-          <div className="bg-black border-t border-gray-700 p-4 sm:p-6">
-            <h2 className="text-white font-bold text-lg sm:text-2xl mb-2">{anime?.title}</h2>
-            {displayEpisode && (
-              <div>
-                <p className="text-gray-300 font-semibold mb-2">
-                  Episode {currentEpisode + 1}: {displayEpisode.title}
-                </p>
-                <p className="text-gray-400 text-sm max-h-20 overflow-y-auto">
-                  {displayEpisode.synopsis || 'No description available'}
-                </p>
-              </div>
-            )}
+          <div className="border-t border-white/10 bg-slate-950 p-4 sm:p-6">
+            <h2 className="text-xl font-semibold text-white">{anime?.title}</h2>
+            <p className="mt-2 text-sm text-slate-300">
+              {displayEpisode?.synopsis || anime?.description || 'No description available.'}
+            </p>
           </div>
         </div>
 
-        {/* Episodes List Section */}
-        <div className="lg:w-96 bg-gray-900 border-l border-gray-700 flex flex-col max-h-screen lg:max-h-full">
-          {/* Episodes Header */}
-          <div className="p-4 sm:p-6 border-b border-gray-700 sticky top-0 bg-gray-900/95 backdrop-blur">
-            <h3 className="text-white font-bold text-lg">Episodes</h3>
-            <p className="text-gray-400 text-sm">{episodes.length} episodes available</p>
+        <aside className="flex max-h-[42vh] flex-col border-t border-white/10 bg-slate-900/90 lg:max-h-screen lg:w-96 lg:border-l lg:border-t-0">
+          <div className="border-b border-white/10 p-4">
+            <h3 className="text-lg font-semibold text-white">Episodes</h3>
+            <p className="text-sm text-slate-300">{episodes.length} available</p>
           </div>
 
-          {/* Episodes Grid */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-            {loading ? (
-              <div className="text-center text-gray-400 py-8">Loading episodes...</div>
-            ) : error ? (
-              <div className="text-center text-red-400 py-8">Error loading episodes</div>
-            ) : episodes.length === 0 ? (
-              <div className="text-center text-gray-400 py-8">No episodes available</div>
-            ) : (
-              <div className="grid grid-cols-1 gap-2">
-                {episodes.map((episode, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentEpisode(index)}
-                    className={`p-3 rounded lg text-left transition ${
-                      currentEpisode === index
-                        ? 'bg-red-600 text-white'
-                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                    }`}
-                  >
-                    <div className="font-semibold text-sm truncate">
-                      Ep {index + 1}: {episode.title}
-                    </div>
-                    <div className="text-xs opacity-75 truncate">
-                      {episode.aired || 'N/A'}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <div className="flex-1 space-y-2 overflow-y-auto p-4">
+            {loading && <p className="py-8 text-center text-sm text-slate-300">Loading episodes...</p>}
+            {!loading && error && <p className="py-8 text-center text-sm text-rose-300">Error loading episodes.</p>}
+            {!loading && !error && episodes.length === 0 && <p className="py-8 text-center text-sm text-slate-300">No episodes available.</p>}
 
-          {/* Pagination Controls */}
-          {episodes.length > 0 && (
-            <div className="p-4 border-t border-gray-700 flex items-center justify-between bg-gray-900/95 sticky bottom-0">
+            {!loading && !error && episodes.map((episode, index) => (
               <button
-                onClick={() => setCurrentEpisode(Math.max(0, currentEpisode - 1))}
-                disabled={currentEpisode === 0}
-                className="p-2 hover:bg-gray-700 disabled:opacity-50 rounded transition text-white"
+                key={`${episode.mal_id || index}-${episode.title || 'episode'}`}
+                onClick={() => setCurrentEpisode(index)}
+                className={`w-full rounded-xl border px-3 py-2 text-left transition ${
+                  safeEpisodeIndex === index
+                    ? 'border-cyan-300/60 bg-cyan-300/20 text-white'
+                    : 'border-white/10 bg-slate-800/70 text-slate-200 hover:bg-slate-700/80'
+                }`}
               >
-                <ChevronLeft className="w-5 h-5" />
+                <p className="truncate text-sm font-medium">Ep {index + 1}: {episode.title || 'Untitled Episode'}</p>
+                <p className="mt-1 truncate text-xs opacity-80">{episode.aired ? new Date(episode.aired).toLocaleDateString() : 'No air date'}</p>
               </button>
-              <span className="text-gray-300 text-sm">
-                {currentEpisode + 1} / {episodes.length}
-              </span>
+            ))}
+          </div>
+
+          {episodes.length > 0 && (
+            <div className="flex items-center justify-between border-t border-white/10 p-4">
               <button
-                onClick={() => setCurrentEpisode(Math.min(episodes.length - 1, currentEpisode + 1))}
-                disabled={currentEpisode === episodes.length - 1}
-                className="p-2 hover:bg-gray-700 disabled:opacity-50 rounded transition text-white"
+                onClick={() => setCurrentEpisode((prev) => Math.max(0, prev - 1))}
+                disabled={safeEpisodeIndex === 0}
+                className="rounded-lg border border-white/10 p-2 text-white transition hover:bg-white/10 disabled:opacity-40"
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <span className="text-sm text-slate-200">{safeEpisodeIndex + 1} / {episodes.length}</span>
+              <button
+                onClick={() => setCurrentEpisode((prev) => Math.min(episodes.length - 1, prev + 1))}
+                disabled={safeEpisodeIndex === episodes.length - 1}
+                className="rounded-lg border border-white/10 p-2 text-white transition hover:bg-white/10 disabled:opacity-40"
+              >
+                <ChevronRight className="h-4 w-4" />
               </button>
             </div>
           )}
-        </div>
+        </aside>
       </div>
     </div>
   )
