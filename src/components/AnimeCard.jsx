@@ -46,8 +46,14 @@ export default function AnimeCard({ anime }) {
         <div className="flex flex-1 flex-col p-4">
           <h3 className="line-clamp-2 text-base font-semibold text-white">{anime.title}</h3>
           <p className="mt-1 line-clamp-1 text-xs text-slate-300">{anime.genre?.slice(0, 2).join(', ') || 'Unknown genre'}</p>
+<<<<<<< HEAD
 
           <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3 text-xs text-slate-300">
+=======
+          <p className="mt-2 line-clamp-3 flex-1 text-xs text-slate-400">{anime.description || 'No description available.'}</p>
+
+          <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-3 text-xs text-slate-300">
+>>>>>>> origin/main
             <span>{anime.episodes || '?'} episodes</span>
             <span className="truncate pl-2">{anime.status || 'Unknown'}</span>
           </div>

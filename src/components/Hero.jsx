@@ -10,22 +10,35 @@ export default function Hero({ selectedGenre = 'All' }) {
   const [showPlayer, setShowPlayer] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
 
+<<<<<<< HEAD
   const filteredAnime = selectedGenre === 'All'
     ? allAnime
     : allAnime.filter((anime) => anime.genre?.includes(selectedGenre))
 
   const safeIndex = filteredAnime.length > 0 ? Math.min(currentIndex, filteredAnime.length - 1) : 0
   const featured = filteredAnime[safeIndex] || null
+=======
+  const safeIndex = allAnime.length > 0 ? Math.min(currentIndex, allAnime.length - 1) : 0
+  const featured = allAnime[safeIndex] || null
+>>>>>>> origin/main
 
   useEffect(() => {
     if (!autoPlay || loading || filteredAnime.length === 0) return
 
     const interval = setInterval(() => {
+<<<<<<< HEAD
       setCurrentIndex((prev) => (prev + 1) % filteredAnime.length)
     }, 7000)
 
     return () => clearInterval(interval)
   }, [autoPlay, loading, filteredAnime.length])
+=======
+      setCurrentIndex((prev) => (prev + 1) % allAnime.length)
+    }, 7000)
+
+    return () => clearInterval(interval)
+  }, [autoPlay, loading, allAnime.length])
+>>>>>>> origin/main
 
   return (
     <section id="hero" className="relative mx-auto mt-4 max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -47,11 +60,19 @@ export default function Hero({ selectedGenre = 'All' }) {
         <div className="relative z-10 flex h-full items-end p-6 sm:p-10">
           <div className="max-w-2xl animate-fade-in-up">
             <span className="inline-flex items-center rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-100">
+<<<<<<< HEAD
               Top Picks {filteredAnime.length > 0 ? `${safeIndex + 1}/${filteredAnime.length}` : ''}
             </span>
 
             <h1 className="mt-4 font-heading text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl">
               {loading ? 'Loading anime lineup...' : featured?.title || 'No anime found for this genre'}
+=======
+              Top Picks {allAnime.length > 0 ? `${safeIndex + 1}/${allAnime.length}` : ''}
+            </span>
+
+            <h1 className="mt-4 font-heading text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl">
+              {loading ? 'Loading anime lineup...' : featured?.title || 'Discover your next favorite anime'}
+>>>>>>> origin/main
             </h1>
 
             <div className="mt-6 flex flex-wrap gap-3">
@@ -78,9 +99,15 @@ export default function Hero({ selectedGenre = 'All' }) {
         <button
           onClick={() => {
             setAutoPlay(false)
+<<<<<<< HEAD
             setCurrentIndex((prev) => (prev - 1 + filteredAnime.length) % filteredAnime.length)
           }}
           disabled={loading || filteredAnime.length < 2}
+=======
+            setCurrentIndex((prev) => (prev - 1 + allAnime.length) % allAnime.length)
+          }}
+          disabled={loading || allAnime.length < 2}
+>>>>>>> origin/main
           className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/20 bg-slate-950/70 p-2 text-white transition hover:bg-slate-900 disabled:opacity-40"
           aria-label="Previous anime"
         >
@@ -90,18 +117,30 @@ export default function Hero({ selectedGenre = 'All' }) {
         <button
           onClick={() => {
             setAutoPlay(false)
+<<<<<<< HEAD
             setCurrentIndex((prev) => (prev + 1) % filteredAnime.length)
           }}
           disabled={loading || filteredAnime.length < 2}
+=======
+            setCurrentIndex((prev) => (prev + 1) % allAnime.length)
+          }}
+          disabled={loading || allAnime.length < 2}
+>>>>>>> origin/main
           className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/20 bg-slate-950/70 p-2 text-white transition hover:bg-slate-900 disabled:opacity-40"
           aria-label="Next anime"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
 
+<<<<<<< HEAD
         {filteredAnime.length > 1 && (
           <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2">
             {filteredAnime.map((entry, idx) => (
+=======
+        {allAnime.length > 1 && (
+          <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2">
+            {allAnime.map((entry, idx) => (
+>>>>>>> origin/main
               <button
                 key={entry.id}
                 onClick={() => {

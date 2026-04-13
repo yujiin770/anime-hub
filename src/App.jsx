@@ -24,7 +24,6 @@ const genreOptions = [
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedGenre, setSelectedGenre] = useState('All')
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[var(--bg)] text-white">
@@ -37,6 +36,7 @@ function App() {
       <Header
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+<<<<<<< HEAD
         selectedGenre={selectedGenre}
         setSelectedGenre={setSelectedGenre}
         genreOptions={genreOptions}
@@ -44,6 +44,12 @@ function App() {
 
       <main className="pt-20 sm:pt-24">
         <Hero selectedGenre={selectedGenre} />
+=======
+      />
+
+      <main>
+        <Hero />
+>>>>>>> origin/main
         <Featured />
         <AnimeGrid searchQuery={searchQuery} />
       </main>
