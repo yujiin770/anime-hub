@@ -1,88 +1,55 @@
-import { useState } from 'react'
 import AnimeCard from './AnimeCard'
 import { useTopAnime, useSearchAnime } from '../hooks/useAnime'
 
-const genreIds = {
-  'All': null,
-  'Action': 1,
-  'Adventure': 2,
-  'Comedy': 4,
-  'Drama': 8,
-  'Fantasy': 10,
-  'Horror': 14,
-  'Sci-Fi': 24,
-  'Supernatural': 37,
-  'Thriller': 41,
-  'School': 23
-}
-
-export default function AnimeGrid({ searchQuery, selectedGenre, setSelectedGenre }) {
+export default function AnimeGrid({ searchQuery }) {
   const page = 1
-  const { anime: topAnime, loading: topLoading } = useTopAnime(page)
-  const { anime: searchResults, loading: searchLoading } = useSearchAnime(searchQuery)
-  
-  const anime = searchQuery.trim() ? searchResults : topAnime
-  const loading = searchQuery.trim() ? searchLoading : topLoading
+  const trimmedQuery = searchQuery.trim()
 
-  // For now, we're not filtering by genre due to API limitations
-  // Genre filtering would require additional API calls per genre
-  const displayAnime = anime
+  const { anime: topAnime, loading: topLoading, error: topError } = useTopAnime(page)
+  const { anime: searchResults, loading: searchLoading, error: searchError } = useSearchAnime(trimmedQuery)
+
+  const displayAnime = trimmedQuery ? searchResults : topAnime
+  const loading = trimmedQuery ? searchLoading : topLoading
+  const error = trimmedQuery ? searchError : topError
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Genre Filter */}
-      <div className="mb-8">
-        <h2 className="text-xl font-bold text-white mb-4">Genres (Browse by Top)</h2>
-        <div className="flex flex-wrap gap-2 sm:gap-3">
-          {Object.keys(genreIds).map(genre => (
-            <button
-              key={genre}
-              onClick={() => setSelectedGenre(genre)}
-              className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition text-sm sm:text-base ${
-                selectedGenre === genre
-                  ? 'bg-red-600 text-white'
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
-            >
-              {genre}
-            </button>
-          ))}
-        </div>
-        <p className="text-gray-400 text-xs sm:text-sm mt-3">
-          💡 Tip: Use search to find specific anime. Showing top {displayAnime.length} anime from database.
+    <section id="library" className="mx-auto mt-14 max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+      <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 sm:p-6">
+        <h2 className="font-heading text-3xl font-semibold text-white">Anime Library</h2>
+        <p className="mt-1 text-sm text-slate-300">
+          {trimmedQuery
+            ? `Showing direct results for "${trimmedQuery}".`
+            : 'Showing top anime picks.'}
         </p>
       </div>
 
-      {/* Loading State */}
       {loading && (
-        <div className="flex justify-center items-center py-12">
-          <div className="animate-spin">
-            <div className="w-12 h-12 border-4 border-gray-700 border-t-red-600 rounded-full"></div>
-          </div>
-          <span className="ml-3 text-gray-400">Loading anime...</span>
+        <div className="py-14 text-center">
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-slate-600 border-t-cyan-300" />
+          <p className="mt-3 text-slate-300">Loading anime...</p>
         </div>
       )}
 
-      {/* Error State */}
-      {!loading && displayAnime.length === 0 && searchQuery && (
-        <div className="text-center py-12">
-          <p className="text-gray-400 text-lg">No anime found for "{searchQuery}"</p>
-          <p className="text-gray-500 text-sm mt-2">Try a different search term</p>
+      {!loading && error && (
+        <div className="mt-6 rounded-2xl border border-rose-300/30 bg-rose-500/10 p-4 text-sm text-rose-200">
+          {error}
         </div>
       )}
 
-      {/* Anime Grid */}
-      {!loading && displayAnime.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-          {displayAnime.map(anime => (
-            <AnimeCard
-              key={anime.id}
-              anime={anime}
-            />
+      {!loading && !error && displayAnime.length === 0 && (
+        <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
+          <p className="text-base text-slate-200">No anime found.</p>
+          <p className="mt-1 text-sm text-slate-400">Try another anime title in search.</p>
+        </div>
+      )}
+
+      {!loading && !error && displayAnime.length > 0 && (
+        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {displayAnime.map((anime) => (
+            <AnimeCard key={anime.id} anime={anime} />
           ))}
         </div>
       )}
     </section>
   )
 }
-

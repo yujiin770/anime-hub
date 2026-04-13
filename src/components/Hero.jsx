@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Play, Info, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Play, Info, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { useTrendingAnime } from '../hooks/useAnime'
 import NetflixPlayer from './NetflixPlayer'
 
@@ -8,164 +8,144 @@ export default function Hero() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [autoPlay, setAutoPlay] = useState(true)
   const [showPlayer, setShowPlayer] = useState(false)
+  const [showInfo, setShowInfo] = useState(false)
 
-  const featured = allAnime?.[currentIndex] || null
+  const safeIndex = allAnime.length > 0 ? Math.min(currentIndex, allAnime.length - 1) : 0
+  const featured = allAnime[safeIndex] || null
 
-  // Auto-advance carousel every 8 seconds
   useEffect(() => {
     if (!autoPlay || loading || allAnime.length === 0) return
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % allAnime.length)
-    }, 8000)
+    }, 7000)
 
     return () => clearInterval(interval)
   }, [autoPlay, loading, allAnime.length])
 
-  const goToPrevious = () => {
-    setAutoPlay(false)
-    setCurrentIndex((prev) => (prev - 1 + allAnime.length) % allAnime.length)
-  }
-
-  const goToNext = () => {
-    setAutoPlay(false)
-    setCurrentIndex((prev) => (prev + 1) % allAnime.length)
-  }
-
-  const handleWatchNow = () => {
-    setShowPlayer(true)
-  }
-
-  const handleMoreInfo = () => {
-    alert(`Title: ${featured?.title}\n\nScore: ${featured?.score?.toFixed(1) || featured?.rating?.toFixed(1) || 'N/A'}/10\n\nStatus: ${featured?.status}\n\nEpisodes: ${featured?.episodes || '?'}`)
-  }
-
   return (
-    <div className="relative w-full bg-black overflow-hidden group h-96 md:h-screen max-h-screen">
-      {/* Background Image with smooth transition */}
-      {featured?.images?.jpg?.image_url && (
-        <div className="absolute inset-0 transition-opacity duration-1000">
+    <section id="hero" className="relative mx-auto mt-4 max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="relative isolate h-[72vh] min-h-[420px] overflow-hidden rounded-3xl border border-white/10 bg-slate-950 shadow-[0_20px_70px_rgba(0,0,0,0.45)]">
+        {featured?.image && (
           <img
-            src={featured.images.jpg.image_url}
+            src={featured.image}
             alt={featured.title}
-            className="w-full h-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover"
             onError={(e) => {
-              e.target.style.display = 'none'
+              e.currentTarget.style.display = 'none'
             }}
           />
-        </div>
-      )}
+        )}
 
-      {/* Dark Gradient Overlay - More prominent */}
-      <div
-        className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"
-      />
-      <div
-        className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90"
-      />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/75 to-slate-950/25" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/50 to-transparent" />
 
-      {/* Content */}
-      <div className="absolute inset-0 flex items-end md:items-center px-4 sm:px-6 md:px-12 pb-8 md:pb-12 z-10">
-        <div className="max-w-2xl animate-fade-in-up">
-          <div className="mb-2 sm:mb-4 inline-block px-3 py-1 bg-red-600/40 text-red-300 rounded-full text-xs font-semibold border border-red-500/50">
-            TRENDING NOW • {currentIndex + 1} / {allAnime.length}
-          </div>
+        <div className="relative z-10 flex h-full items-end p-6 sm:p-10">
+          <div className="max-w-2xl animate-fade-in-up">
+            <span className="inline-flex items-center rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-100">
+              Top Picks {allAnime.length > 0 ? `${safeIndex + 1}/${allAnime.length}` : ''}
+            </span>
 
-          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-2 sm:mb-4 leading-tight drop-shadow-lg">
-            {loading ? 'Loading Amazing Anime...' : featured?.title || 'Anime Hub'}
-          </h1>
+            <h1 className="mt-4 font-heading text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl">
+              {loading ? 'Loading anime lineup...' : featured?.title || 'Discover your next favorite anime'}
+            </h1>
 
-          <p className="text-sm sm:text-base md:text-lg text-gray-200 mb-4 md:mb-6 max-w-xl line-clamp-3 drop-shadow">
-            {featured?.synopsis || 'Discover amazing anime series with stunning animation'}
-          </p>
-
-          {/* Rating and Info */}
-          <div className="flex gap-3 sm:gap-4 items-center mb-4 md:mb-6 flex-wrap">
-            {featured?.score > 0 && (
-              <span className="text-yellow-300 font-semibold text-sm sm:text-base drop-shadow">★ {featured.score.toFixed(1)}/10</span>
-            )}
-            {featured?.genres?.length > 0 && (
-              <span className="text-gray-300 text-xs sm:text-sm drop-shadow">{featured.genres.slice(0, 2).map(g => g.name).join(' • ')}</span>
-            )}
-            {featured?.year && (
-              <span className="text-gray-300 text-xs sm:text-sm drop-shadow">{featured.year}</span>
-            )}
-          </div>
-
-          {/* CTA Buttons */}
-          <div className="flex gap-2 sm:gap-4 flex-wrap">
-            <button 
-              onClick={handleWatchNow}
-              className="flex items-center gap-2 px-4 sm:px-8 py-2 sm:py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition transform hover:scale-105 text-sm sm:text-base active:scale-95 shadow-lg hover:shadow-red-600/50"
-            >
-              <Play className="w-4 sm:w-5 h-4 sm:h-5 fill-white" />
-              Watch Now
-            </button>
-            <button 
-              onClick={handleMoreInfo}
-              className="flex items-center gap-2 px-4 sm:px-8 py-2 sm:py-3 bg-white/20 hover:bg-white/30 text-white font-bold rounded-lg transition text-sm sm:text-base active:scale-95 backdrop-blur-sm"
-            >
-              <Info className="w-4 sm:w-5 h-4 sm:h-5" />
-              More Info
-            </button>
-          </div>
-
-          {/* Stats */}
-          {featured && (
-            <div className="mt-4 md:mt-6 flex gap-4 sm:gap-6 text-xs sm:text-sm text-gray-300 flex-wrap drop-shadow">
-              <span>📺 {featured.episodes || '?'} Episodes</span>
-              <span className="capitalize">📌 {featured.status || 'Unknown'}</span>
-              {featured.type && <span>🎬 {featured.type}</span>}
+            <div className="mt-6 flex flex-wrap gap-3">
+              <button
+                onClick={() => setShowPlayer(true)}
+                disabled={!featured}
+                className="inline-flex items-center gap-2 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                <Play className="h-4 w-4 fill-current" />
+                Play Episodes
+              </button>
+              <button
+                onClick={() => setShowInfo(true)}
+                disabled={!featured}
+                className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                <Info className="h-4 w-4" />
+                More Info
+              </button>
             </div>
-          )}
+          </div>
         </div>
+
+        <button
+          onClick={() => {
+            setAutoPlay(false)
+            setCurrentIndex((prev) => (prev - 1 + allAnime.length) % allAnime.length)
+          }}
+          disabled={loading || allAnime.length < 2}
+          className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/20 bg-slate-950/70 p-2 text-white transition hover:bg-slate-900 disabled:opacity-40"
+          aria-label="Previous anime"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+
+        <button
+          onClick={() => {
+            setAutoPlay(false)
+            setCurrentIndex((prev) => (prev + 1) % allAnime.length)
+          }}
+          disabled={loading || allAnime.length < 2}
+          className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/20 bg-slate-950/70 p-2 text-white transition hover:bg-slate-900 disabled:opacity-40"
+          aria-label="Next anime"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
+
+        {allAnime.length > 1 && (
+          <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2">
+            {allAnime.map((entry, idx) => (
+              <button
+                key={entry.id}
+                onClick={() => {
+                  setAutoPlay(false)
+                  setCurrentIndex(idx)
+                }}
+                className={`h-2 rounded-full transition ${idx === safeIndex ? 'w-8 bg-cyan-300' : 'w-2 bg-white/60 hover:bg-white'}`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Carousel Navigation - Left */}
-      <button
-        onClick={goToPrevious}
-        disabled={loading}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 bg-red-600/80 hover:bg-red-600 disabled:opacity-50 rounded-full transition transform hover:scale-110 active:scale-95"
-      >
-        <ChevronLeft className="w-6 h-6 text-white" />
-      </button>
-
-      {/* Carousel Navigation - Right */}
-      <button
-        onClick={goToNext}
-        disabled={loading}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 bg-red-600/80 hover:bg-red-600 disabled:opacity-50 rounded-full transition transform hover:scale-110 active:scale-95"
-      >
-        <ChevronRight className="w-6 h-6 text-white" />
-      </button>
-
-      {/* Carousel Indicators */}
-      <div className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-        {allAnime.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => {
-              setAutoPlay(false)
-              setCurrentIndex(idx)
-            }}
-            className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition ${
-              idx === currentIndex ? 'bg-red-600 w-6 sm:w-8' : 'bg-gray-400 hover:bg-gray-300'
-            }`}
-          />
-        ))}
-      </div>
-
-      {/* Decorative Elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-red-600/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-
-      {/* Netflix Player Modal */}
       {showPlayer && featured && (
-        <NetflixPlayer 
-          anime={featured} 
+        <NetflixPlayer
+          anime={featured}
           onClose={() => setShowPlayer(false)}
         />
       )}
-    </div>
+
+      {showInfo && featured && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4" onClick={() => setShowInfo(false)}>
+          <div className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-white/15 bg-slate-900 p-5 sm:p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between gap-4">
+              <h2 className="font-heading text-2xl font-semibold text-white">{featured.title}</h2>
+              <button onClick={() => setShowInfo(false)} className="rounded-lg border border-white/15 p-2 text-slate-200 transition hover:bg-white/10">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="mt-4 flex flex-wrap gap-2 text-xs text-slate-200 sm:text-sm">
+              <span className="rounded-full bg-white/10 px-3 py-1">{featured.year || 'Unknown Year'}</span>
+              <span className="rounded-full bg-white/10 px-3 py-1">{featured.episodes || '?'} episodes</span>
+              <span className="rounded-full bg-white/10 px-3 py-1">{featured.rating > 0 ? `${featured.rating.toFixed(1)} rating` : 'No rating'}</span>
+              <span className="rounded-full bg-white/10 px-3 py-1">{featured.status || 'Unknown status'}</span>
+            </div>
+
+            <p className="mt-4 text-sm leading-6 text-slate-300">
+              {featured.description || 'No description available.'}
+            </p>
+
+            <p className="mt-3 text-xs text-slate-400">
+              Genres: {featured.genre?.join(', ') || 'N/A'}
+            </p>
+          </div>
+        </div>
+      )}
+    </section>
   )
 }
