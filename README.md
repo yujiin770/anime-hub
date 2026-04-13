@@ -310,17 +310,5 @@ Open source MIT License - Feel free to use for personal/commercial projects
 - [ ] Social sharing features
 - [ ] Advanced filtering (year, season, score)
 
-## 🤝 Contributing
 
-Found a bug or want to add features? Feel free to:
-1. Fork the project
-2. Create your feature branch
-3. Submit a pull request
-
-## 📞 Support & Contact
-
-For issues, suggestions, or questions:
-- Check the troubleshooting section above
-- Review Jikan API documentation
-- Check console for error messages
 

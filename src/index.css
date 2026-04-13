@@ -1,10 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 @import "tailwindcss";
+
+:root {
+  --bg: #020617;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
 
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom animations */
+body {
+  margin: 0;
+  font-family: 'Manrope', sans-serif;
+  background: radial-gradient(circle at 20% 0%, #0f172a 0%, #020617 45%, #010313 100%);
+  color: #ffffff;
+}
+
+.font-heading {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(125, 211, 252, 0.55) rgba(15, 23, 42, 0.45);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.45);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(125, 211, 252, 0.55);
+  border-radius: 999px;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -16,19 +56,6 @@ html {
   }
 }
 
-@keyframes glow {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
-  }
-  50% {
-    box-shadow: 0 0 40px rgba(239, 68, 68, 1);
-  }
-}
-
 .animate-fade-in-up {
   animation: fadeInUp 0.6s ease-out;
-}
-
-.glow-red {
-  animation: glow 2s infinite;
 }
