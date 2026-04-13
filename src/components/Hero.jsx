@@ -41,12 +41,7 @@ export default function Hero() {
   }
 
   return (
-    <div className="relative w-full bg-black overflow-hidden group">
-      {/* Desktop Height */}
-      <div className="hidden md:block aspect-video" />
-      {/* Mobile Height */}
-      <div className="md:hidden h-80" />
-
+    <div className="relative w-full bg-black overflow-hidden group h-96 md:h-screen max-h-screen">
       {/* Background Image with smooth transition */}
       {featured?.images?.jpg?.image_url && (
         <div className="absolute inset-0 transition-opacity duration-1000">
@@ -70,7 +65,7 @@ export default function Hero() {
       />
 
       {/* Content */}
-      <div className="relative h-full flex items-end md:items-center px-4 sm:px-6 md:px-12 pb-8 md:pb-0 z-10">
+      <div className="absolute inset-0 flex items-end md:items-center px-4 sm:px-6 md:px-12 pb-8 md:pb-12 z-10">
         <div className="max-w-2xl animate-fade-in-up">
           <div className="mb-2 sm:mb-4 inline-block px-3 py-1 bg-red-600/40 text-red-300 rounded-full text-xs font-semibold border border-red-500/50">
             TRENDING NOW • {currentIndex + 1} / {allAnime.length}

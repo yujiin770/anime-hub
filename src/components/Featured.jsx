@@ -41,7 +41,7 @@ export default function Featured() {
         {featuredAnime.slice(0, 4).map((anime, index) => (
           <div
             key={anime.id}
-            className="group relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg p-4 sm:p-6 overflow-hidden cursor-pointer hover:border-red-500 border-2 border-gray-700 transition"
+            className="group relative bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg p-4 sm:p-6 overflow-hidden cursor-pointer hover:border-red-500 border-2 border-gray-700 transition h-full flex flex-col"
           >
             {/* Rank Badge */}
             <div className="absolute -top-3 -left-3 w-14 sm:w-16 h-14 sm:h-16 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-lg sm:text-2xl shadow-lg">
@@ -63,15 +63,15 @@ export default function Featured() {
             )}
 
             {/* Content */}
-            <div className="relative z-10 pt-4">
+            <div className="relative z-10 pt-4 flex-grow flex flex-col">
               <h3 className="text-lg sm:text-xl font-bold text-white mb-2 group-hover:text-red-500 transition line-clamp-2">
                 {anime.title}
               </h3>
 
-              <div className="space-y-2 text-xs sm:text-sm text-gray-400">
+              <div className="space-y-2 text-xs sm:text-sm text-gray-400 flex-grow">
                 <div className="flex justify-between">
                   <span>Episodes: {anime.episodes || '?'}</span>
-                  <span className="text-yellow-400 font-semibold">★ {anime.rating.toFixed(1)}</span>
+                  <span className="text-yellow-400 font-semibold">★ {anime.score?.toFixed(1) || 'N/A'}</span>
                 </div>
                 <div className="pt-2 border-t border-gray-700">
                   <span className="text-green-500 font-bold">Popular anime</span>
