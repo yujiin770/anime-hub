@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { X, ChevronLeft, ChevronRight, Play as PlayIcon, Volume2, VolumeX, Maximize2 } from 'lucide-react'
 import { useAnimeEpisodes } from '../hooks/useAnime'
 
@@ -6,28 +6,8 @@ export default function NetflixPlayer({ anime, onClose }) {
   const { episodes, loading, error } = useAnimeEpisodes(anime?.id, true)
   const [currentEpisode, setCurrentEpisode] = useState(0)
   const [isMuted, setIsMuted] = useState(false)
-  const [episodePage, setEpisodePage] = useState(0)
-
-  const episodesPerPage = 6
-  const paginatedEpisodes = episodes.slice(
-    episodePage * episodesPerPage,
-    (episodePage + 1) * episodesPerPage
-  )
-  const totalPages = Math.ceil(episodes.length / episodesPerPage)
 
   const displayEpisode = episodes[currentEpisode] || null
-
-  const handlePreviousEpisode = () => {
-    if (currentEpisode > 0) setCurrentEpisode(currentEpisode - 1)
-  }
-
-  const handleNextEpisode = () => {
-    if (currentEpisode < episodes.length - 1) setCurrentEpisode(currentEpisode + 1)
-  }
-
-  const handleSelectEpisode = (index) => {
-    setCurrentEpisode(index)
-  }
 
   return (
     <div className="fixed inset-0 bg-black z-50 overflow-hidden">

@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Search, Play, Menu, X } from 'lucide-react'
+import { Search, Play, Menu, X, Sun, Moon } from 'lucide-react'
 
-export default function Header({ searchQuery, setSearchQuery }) {
+export default function Header({ searchQuery, setSearchQuery, theme, setTheme }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
@@ -34,8 +34,15 @@ export default function Header({ searchQuery, setSearchQuery }) {
             <a href="#" className="text-gray-300 hover:text-red-500 transition">Home</a>
             <a href="#" className="text-gray-300 hover:text-red-500 transition">Trending</a>
             <a href="#" className="text-gray-300 hover:text-red-500 transition">Genres</a>
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="inline-flex items-center justify-center px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
             <button className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition">
-              Sign In
+              Sign Inn
             </button>
           </nav>
 
@@ -72,6 +79,13 @@ export default function Header({ searchQuery, setSearchQuery }) {
             <a href="#" className="text-gray-300 hover:text-red-500 transition py-2">Home</a>
             <a href="#" className="text-gray-300 hover:text-red-500 transition py-2">Trending</a>
             <a href="#" className="text-gray-300 hover:text-red-500 transition py-2">Genres</a>
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition"
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+            </button>
             <button className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition">
               Sign In
             </button>

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import AnimeCard from './AnimeCard'
 import { useTopAnime, useSearchAnime } from '../hooks/useAnime'
 
@@ -20,13 +19,19 @@ export default function AnimeGrid({ searchQuery, selectedGenre, setSelectedGenre
   const page = 1
   const { anime: topAnime, loading: topLoading } = useTopAnime(page)
   const { anime: searchResults, loading: searchLoading } = useSearchAnime(searchQuery)
-  
-  const anime = searchQuery.trim() ? searchResults : topAnime
-  const loading = searchQuery.trim() ? searchLoading : topLoading
+
+  const normalizedQuery = searchQuery.trim().toLowerCase()
+  const isSearching = normalizedQuery.length > 0
+  const anime = isSearching ? searchResults : topAnime
+  const loading = isSearching ? searchLoading : topLoading
+
+  const exactMatches = isSearching
+    ? anime.filter((item) => item.title?.trim().toLowerCase() === normalizedQuery)
+    : []
 
   // For now, we're not filtering by genre due to API limitations
   // Genre filtering would require additional API calls per genre
-  const displayAnime = anime
+  const displayAnime = exactMatches.length > 0 ? exactMatches : anime
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -64,7 +69,7 @@ export default function AnimeGrid({ searchQuery, selectedGenre, setSelectedGenre
       )}
 
       {/* Error State */}
-      {!loading && displayAnime.length === 0 && searchQuery && (
+      {!loading && displayAnime.length === 0 && isSearching && (
         <div className="text-center py-12">
           <p className="text-gray-400 text-lg">No anime found for "{searchQuery}"</p>
           <p className="text-gray-500 text-sm mt-2">Try a different search term</p>

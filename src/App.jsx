@@ -8,10 +8,16 @@ import Featured from './components/Featured'
 function App() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedGenre, setSelectedGenre] = useState('All')
+  const [theme, setTheme] = useState('dark')
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950">
-      <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+    <div className={`min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 ${theme === 'light' ? 'theme-light' : ''}`}>
+      <Header
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        theme={theme}
+        setTheme={setTheme}
+      />
       <Hero />
       <Featured />
       <AnimeGrid searchQuery={searchQuery} selectedGenre={selectedGenre} setSelectedGenre={setSelectedGenre} />

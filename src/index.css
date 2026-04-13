@@ -4,6 +4,38 @@ html {
   scroll-behavior: smooth;
 }
 
+.theme-light {
+  color: #0f172a;
+  background: linear-gradient(to bottom, #f8fafc, #e2e8f0, #f8fafc);
+}
+
+.theme-light .bg-gray-950\/95 {
+  background-color: rgba(248, 250, 252, 0.95) !important;
+}
+
+.theme-light .bg-gray-900 {
+  background-color: #e2e8f0 !important;
+}
+
+.theme-light .bg-gray-800 {
+  background-color: #cbd5e1 !important;
+}
+
+.theme-light .border-gray-800,
+.theme-light .border-gray-700 {
+  border-color: #cbd5e1 !important;
+}
+
+.theme-light .text-white {
+  color: #0f172a !important;
+}
+
+.theme-light .text-gray-300,
+.theme-light .text-gray-400,
+.theme-light .text-gray-500 {
+  color: #334155 !important;
+}
+
 /* Custom animations */
 @keyframes fadeInUp {
   from {
