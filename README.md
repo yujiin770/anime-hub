@@ -308,7 +308,7 @@ Open source MIT License - Feel free to use for personal/commercial projects
 - [ ] Dark/Light theme toggle
 - [ ] Multiple language support
 - [ ] Social sharing features
-- [ ] Advanced filtering (year, season, score)
+- [ ] Advanced filtering (year, season, rating)
 
 
 

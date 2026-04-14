@@ -5,8 +5,26 @@ import Hero from './components/Hero'
 import AnimeGrid from './components/AnimeGrid'
 import Featured from './components/Featured'
 
+const genreOptions = [
+  'All',
+  'Action',
+  'Adventure',
+  'Comedy',
+  'Drama',
+  'Fantasy',
+  'Horror',
+  'Mystery',
+  'Romance',
+  'Sci-Fi',
+  'Slice of Life',
+  'Sports',
+  'Supernatural',
+  'Thriller'
+]
+
 function App() {
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedGenre, setSelectedGenre] = useState('All')
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[var(--bg)] text-white">
@@ -19,10 +37,13 @@ function App() {
       <Header
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        selectedGenre={selectedGenre}
+        setSelectedGenre={setSelectedGenre}
+        genreOptions={genreOptions}
       />
 
-      <main>
-        <Hero />
+      <main className="pt-20 sm:pt-24">
+        <Hero selectedGenre={selectedGenre} />
         <Featured />
         <AnimeGrid searchQuery={searchQuery} />
       </main>

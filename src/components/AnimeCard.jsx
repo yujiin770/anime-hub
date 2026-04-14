@@ -1,19 +1,15 @@
-import { Play, Info } from 'lucide-react'
 import { useState } from 'react'
 import NetflixPlayer from './NetflixPlayer'
+import { Play, Info, X } from 'lucide-react'
 
 export default function AnimeCard({ anime }) {
   const [showPlayer, setShowPlayer] = useState(false)
-
-  const handleInfo = () => {
-    alert([
-      anime.title,
-      `Rating: ${anime.rating > 0 ? anime.rating.toFixed(1) : 'N/A'}/10`,
-      `Episodes: ${anime.episodes || 'Unknown'}`,
-      `Status: ${anime.status || 'Unknown'}`,
-      `Genres: ${anime.genre?.join(', ') || 'N/A'}`
-    ].join('\n'))
-  }
+  const [showInfoModal, setShowInfoModal] = useState(false)
+  const episodeOrSeason = anime.episodes > 0
+    ? `${anime.episodes} episodes`
+    : anime.season
+      ? `${anime.season} season`
+      : 'Episodes/Season TBA'
 
   return (
     <>
@@ -39,17 +35,16 @@ export default function AnimeCard({ anime }) {
           </span>
 
           <div className="absolute bottom-2 left-2 rounded-full bg-black/70 px-2.5 py-1 text-xs font-semibold text-cyan-200">
-            {anime.rating > 0 ? anime.rating.toFixed(1) : 'N/A'} score
+            {anime.rating > 0 ? anime.rating.toFixed(1) : 'N/A'} rating
           </div>
         </div>
 
         <div className="flex flex-1 flex-col p-4">
           <h3 className="line-clamp-2 text-base font-semibold text-white">{anime.title}</h3>
           <p className="mt-1 line-clamp-1 text-xs text-slate-300">{anime.genre?.slice(0, 2).join(', ') || 'Unknown genre'}</p>
-          <p className="mt-2 line-clamp-3 flex-1 text-xs text-slate-400">{anime.description || 'No description available.'}</p>
 
-          <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-3 text-xs text-slate-300">
-            <span>{anime.episodes || '?'} episodes</span>
+          <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3 text-xs text-slate-300">
+            <span className="capitalize">{episodeOrSeason}</span>
             <span className="truncate pl-2">{anime.status || 'Unknown'}</span>
           </div>
 
@@ -62,7 +57,7 @@ export default function AnimeCard({ anime }) {
               Play
             </button>
             <button
-              onClick={handleInfo}
+              onClick={() => setShowInfoModal(true)}
               className="inline-flex flex-1 items-center justify-center gap-1 rounded-xl border border-white/15 bg-white/5 py-2 text-xs font-semibold text-white transition hover:bg-white/10"
             >
               <Info className="h-3.5 w-3.5" />
@@ -77,6 +72,40 @@ export default function AnimeCard({ anime }) {
           anime={anime}
           onClose={() => setShowPlayer(false)}
         />
+      )}
+
+      {showInfoModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4" onClick={() => setShowInfoModal(false)}>
+          <div
+            className="max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-2xl border border-white/15 bg-slate-900 p-5 sm:p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <h2 className="font-heading text-2xl font-semibold text-white">{anime.title}</h2>
+              <button
+                onClick={() => setShowInfoModal(false)}
+                className="rounded-lg border border-white/15 p-2 text-slate-200 transition hover:bg-white/10"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="mt-4 flex flex-wrap gap-2 text-xs text-slate-200 sm:text-sm">
+              <span className="rounded-full bg-white/10 px-3 py-1">{anime.year || 'Unknown Year'}</span>
+              <span className="rounded-full bg-white/10 px-3 py-1 capitalize">{episodeOrSeason}</span>
+              <span className="rounded-full bg-white/10 px-3 py-1">{anime.rating > 0 ? `${anime.rating.toFixed(1)} rating` : 'No rating'}</span>
+              <span className="rounded-full bg-white/10 px-3 py-1">{anime.status || 'Unknown status'}</span>
+            </div>
+
+            <p className="mt-4 text-sm leading-6 text-slate-300">
+              {anime.description || 'No description available.'}
+            </p>
+
+            <p className="mt-3 text-xs text-slate-400">
+              Genres: {anime.genre?.join(', ') || 'N/A'}
+            </p>
+          </div>
+        </div>
       )}
     </>
   )

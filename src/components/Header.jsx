@@ -7,7 +7,13 @@ const navItems = [
   { label: 'Library', href: '#library' }
 ]
 
-export default function Header({ searchQuery, setSearchQuery }) {
+export default function Header({
+  searchQuery,
+  setSearchQuery,
+  selectedGenre,
+  setSelectedGenre,
+  genreOptions
+}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [hiddenOnScroll, setHiddenOnScroll] = useState(false)
@@ -15,12 +21,14 @@ export default function Header({ searchQuery, setSearchQuery }) {
 
   useEffect(() => {
     const onScroll = () => {
-      const currentY = window.scrollY
-      const isDown = currentY > lastScrollY.current
+      const currentY = window.scrollY || document.documentElement.scrollTop || 0
+      const delta = currentY - lastScrollY.current
 
-      if (currentY > 90 && isDown) {
+      if (currentY <= 12) {
+        setHiddenOnScroll(false)
+      } else if (delta > 4) {
         setHiddenOnScroll(true)
-      } else {
+      } else if (delta < -4) {
         setHiddenOnScroll(false)
       }
 
@@ -37,7 +45,7 @@ export default function Header({ searchQuery, setSearchQuery }) {
   }
 
   return (
-    <header className={`sticky top-0 z-50 border-b border-white/10 bg-slate-950/85 backdrop-blur-xl transition-transform duration-300 ${hiddenOnScroll ? '-translate-y-full' : 'translate-y-0'}`}>
+    <header className={`fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-slate-950/85 backdrop-blur-xl transition-transform duration-300 will-change-transform ${hiddenOnScroll ? '-translate-y-full' : 'translate-y-0'}`}>
       <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <a href="#hero" className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-white transition hover:bg-white/10">
@@ -68,6 +76,20 @@ export default function Header({ searchQuery, setSearchQuery }) {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="hidden md:block">
+            <select
+              value={selectedGenre}
+              onChange={(e) => setSelectedGenre(e.target.value)}
+              className="rounded-xl border border-white/10 bg-slate-900/80 px-3 py-2.5 text-sm text-white outline-none transition focus:border-cyan-400/70"
+            >
+              {genreOptions.map((genre) => (
+                <option key={genre} value={genre} className="bg-slate-900">
+                  {genre}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="relative ml-auto hidden w-full max-w-md md:block">
@@ -107,6 +129,18 @@ export default function Header({ searchQuery, setSearchQuery }) {
                 className="w-full rounded-xl border border-white/10 bg-slate-900 py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-slate-400 outline-none"
               />
             </div>
+
+            <select
+              value={selectedGenre}
+              onChange={(e) => setSelectedGenre(e.target.value)}
+              className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2.5 text-sm text-white outline-none"
+            >
+              {genreOptions.map((genre) => (
+                <option key={genre} value={genre} className="bg-slate-900">
+                  {genre}
+                </option>
+              ))}
+            </select>
 
             <nav className="grid gap-1">
               {navItems.map(({ label, href }) => (
