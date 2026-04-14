@@ -9,12 +9,15 @@ export default function NetflixPlayer({ anime, onClose }) {
 
   const safeEpisodeIndex = episodes.length > 0 ? Math.min(currentEpisode, episodes.length - 1) : 0
   const displayEpisode = episodes[safeEpisodeIndex] || null
+  const episodeOrSeason = anime?.episodes > 0
+    ? `${anime.episodes} episodes`
+    : anime?.season
+      ? `${anime.season} season`
+      : 'Episodes/Season TBA'
 
   useEffect(() => {
     const onKeyDown = (event) => {
-      if (event.key === 'Escape') {
-        onClose()
-      }
+      if (event.key === 'Escape') onClose()
     }
 
     window.addEventListener('keydown', onKeyDown)
@@ -28,107 +31,95 @@ export default function NetflixPlayer({ anime, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-sm">
-      <div className="absolute left-0 right-0 top-0 z-20 bg-gradient-to-b from-black/90 to-transparent p-4 sm:p-6">
-        <button
-          onClick={onClose}
-          className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-black/40 px-3 py-2 text-sm text-white transition hover:bg-black/60"
-        >
-          <X className="h-4 w-4" />
-          Close Player
-        </button>
+    <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md">
+      <div className="absolute inset-x-0 top-0 z-30 border-b border-white/10 bg-black/70 px-4 py-3 sm:px-6">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3">
+          <div>
+            <h2 className="text-base font-semibold text-white sm:text-lg">{anime?.title}</h2>
+            <p className="text-xs text-slate-300 sm:text-sm capitalize">{episodeOrSeason}</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-black/40 px-3 py-2 text-sm text-white transition hover:bg-black/60"
+          >
+            <X className="h-4 w-4" />
+            Close
+          </button>
+        </div>
       </div>
 
-<<<<<<< HEAD
-      <div className="flex h-full flex-col overflow-hidden lg:flex-row">
-        <div className="flex min-h-[46vh] flex-1 flex-col bg-black lg:min-h-0">
-          <div className="relative flex min-h-[320px] flex-1 items-center justify-center overflow-hidden bg-black">
-=======
-      <div className="flex h-full flex-col lg:flex-row">
-        <div className="flex flex-1 flex-col bg-black">
-          <div className="relative flex flex-1 items-center justify-center overflow-hidden bg-black">
->>>>>>> origin/main
-            {anime?.image && (
-              <img
-                src={anime.image}
-                alt={anime.title}
-                className="absolute inset-0 h-full w-full object-cover opacity-25"
-              />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20" />
+      <div className="mx-auto flex h-full max-w-7xl flex-col pt-18 lg:flex-row">
+        <section className="relative flex min-h-[52vh] flex-1 items-center justify-center overflow-hidden border-b border-white/10 lg:border-b-0 lg:border-r">
+          {anime?.image && (
+            <img
+              src={anime.image}
+              alt={anime.title}
+              className="absolute inset-0 h-full w-full object-cover opacity-30"
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/10" />
 
-            {displayEpisode || loading ? (
-              <div className="relative z-10 px-6 text-center">
-                <PlayIcon className="mx-auto h-14 w-14 fill-cyan-300 text-cyan-300" />
-                <p className="mt-4 text-xl font-semibold text-white sm:text-2xl">{anime?.title}</p>
-                <p className="mt-1 text-sm text-slate-200">
-                  {loading
-                    ? 'Loading episodes...'
-                    : `Episode ${safeEpisodeIndex + 1}: ${displayEpisode?.title || 'Untitled Episode'}`}
-                </p>
+          <div className="relative z-10 w-full max-w-xl px-6 text-center">
+            <PlayIcon className="mx-auto h-14 w-14 fill-cyan-300 text-cyan-300" />
+            <p className="mt-3 text-lg font-semibold text-white sm:text-2xl">{anime?.title}</p>
+            <p className="mt-1 text-sm text-slate-200">
+              {loading
+                ? 'Loading episodes...'
+                : displayEpisode
+                  ? `Episode ${safeEpisodeIndex + 1}: ${displayEpisode.title || 'Untitled Episode'}`
+                  : 'No episodes available'}
+            </p>
+
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-200">
+              <span className="rounded-full bg-white/15 px-3 py-1 capitalize">{episodeOrSeason}</span>
+              <span className="rounded-full bg-white/15 px-3 py-1">{anime?.rating > 0 ? `${anime.rating.toFixed(1)} rating` : 'No rating'}</span>
+              <span className="rounded-full bg-white/15 px-3 py-1">{anime?.year || 'Unknown Year'}</span>
+            </div>
+
+            <button
+              onClick={handlePlayEpisode}
+              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
+            >
+              <PlayIcon className="h-4 w-4 fill-current" />
+              Play
+            </button>
+          </div>
+
+          <div className="absolute bottom-4 left-4 right-4 z-20 rounded-xl border border-white/10 bg-black/55 p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
                 <button
                   onClick={handlePlayEpisode}
-                  className="mt-6 inline-flex items-center gap-2 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
+                  className="rounded-lg p-2 text-white transition hover:bg-white/10"
+                  aria-label="Play"
                 >
                   <PlayIcon className="h-4 w-4 fill-current" />
-                  Play
+                </button>
+                <button
+                  onClick={() => setIsMuted((prev) => !prev)}
+                  className="rounded-lg p-2 text-white transition hover:bg-white/10"
+                  aria-label={isMuted ? 'Unmute' : 'Mute'}
+                >
+                  {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                 </button>
               </div>
-            ) : (
-              <p className="relative z-10 text-sm text-slate-300">{error ? 'Error loading episodes' : 'No episodes available'}</p>
-            )}
 
-            <div className="absolute bottom-4 left-4 right-4 z-10 rounded-xl border border-white/10 bg-black/60 p-3">
-<<<<<<< HEAD
-              <div className="flex flex-wrap items-center justify-between gap-2">
-=======
-              <div className="flex items-center justify-between">
->>>>>>> origin/main
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handlePlayEpisode}
-                    className="rounded-lg p-2 text-white transition hover:bg-white/10"
-                    aria-label="Play"
-                  >
-                    <PlayIcon className="h-4 w-4 fill-current" />
-                  </button>
-                  <button
-                    onClick={() => setIsMuted((prev) => !prev)}
-                    className="rounded-lg p-2 text-white transition hover:bg-white/10"
-                    aria-label={isMuted ? 'Unmute' : 'Mute'}
-                  >
-                    {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                  </button>
-                </div>
-
-                {anime?.url && (
-                  <a
-                    href={anime.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 rounded-lg border border-white/20 px-3 py-1.5 text-xs text-white transition hover:bg-white/10"
-                  >
-                    Official Page
-                    <ExternalLink className="h-3.5 w-3.5" />
-                  </a>
-                )}
-              </div>
+              {anime?.url && (
+                <a
+                  href={anime.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 rounded-lg border border-white/20 px-3 py-1.5 text-xs text-white transition hover:bg-white/10"
+                >
+                  Official Page
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              )}
             </div>
           </div>
+        </section>
 
-          <div className="border-t border-white/10 bg-slate-950 p-4 sm:p-6">
-            <h2 className="text-xl font-semibold text-white">{anime?.title}</h2>
-            <p className="mt-2 text-sm text-slate-300">
-              {displayEpisode?.synopsis || anime?.description || 'No description available.'}
-            </p>
-          </div>
-        </div>
-
-<<<<<<< HEAD
-        <aside className="flex max-h-[42vh] flex-col border-t border-white/10 bg-slate-900/90 lg:max-h-screen lg:w-96 lg:border-l lg:border-t-0">
-=======
-        <aside className="flex max-h-screen flex-col border-l border-white/10 bg-slate-900/90 lg:w-96">
->>>>>>> origin/main
+        <aside className="flex max-h-[42vh] flex-col bg-slate-950/95 lg:max-h-full lg:w-96">
           <div className="border-b border-white/10 p-4">
             <h3 className="text-lg font-semibold text-white">Episodes</h3>
             <p className="text-sm text-slate-300">{episodes.length} available</p>

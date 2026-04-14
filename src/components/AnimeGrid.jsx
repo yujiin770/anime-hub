@@ -1,14 +1,9 @@
-<<<<<<< HEAD
 import { useEffect, useMemo, useRef, useState } from 'react'
-=======
->>>>>>> origin/main
 import AnimeCard from './AnimeCard'
 import { getTopAnime, searchAnime, transformAnimeData } from '../services/animeApi'
 
-<<<<<<< HEAD
 const PAGE_LIMIT = 24
 const INITIAL_SKELETON_COUNT = 12
-
 const normalize = (text = '') => text.toLowerCase().trim()
 
 function rankSearchResults(items, query) {
@@ -57,6 +52,8 @@ export default function AnimeGrid({ searchQuery }) {
   const [loading, setLoading] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState(null)
+  const [yearFilter, setYearFilter] = useState('All')
+  const [ratingFilter, setRatingFilter] = useState(0)
   const sentinelRef = useRef(null)
   const trimmedQuery = searchQuery.trim()
 
@@ -138,69 +135,69 @@ export default function AnimeGrid({ searchQuery }) {
   const sectionTitle = useMemo(() => {
     return trimmedQuery ? 'Search Results' : 'Anime Library'
   }, [trimmedQuery])
-=======
-export default function AnimeGrid({ searchQuery }) {
-  const page = 1
-  const trimmedQuery = searchQuery.trim()
 
-  const { anime: topAnime, loading: topLoading, error: topError } = useTopAnime(page)
-  const { anime: searchResults, loading: searchLoading, error: searchError } = useSearchAnime(trimmedQuery)
+  const yearOptions = useMemo(() => {
+    const years = animeList
+      .map((anime) => anime.year)
+      .filter((year) => typeof year === 'number')
+      .sort((a, b) => b - a)
 
-  const displayAnime = trimmedQuery ? searchResults : topAnime
-  const loading = trimmedQuery ? searchLoading : topLoading
-  const error = trimmedQuery ? searchError : topError
->>>>>>> origin/main
+    return ['All', ...new Set(years)]
+  }, [animeList])
+
+  const filteredAnimeList = useMemo(() => {
+    return animeList.filter((anime) => {
+      const passesYear = yearFilter === 'All' || String(anime.year) === yearFilter
+      const passesRating = (anime.rating || 0) >= ratingFilter
+      return passesYear && passesRating
+    })
+  }, [animeList, yearFilter, ratingFilter])
 
   return (
     <section id="library" className="mx-auto mt-14 max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
       <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-5 sm:p-6">
-<<<<<<< HEAD
         <h2 className="font-heading text-3xl font-semibold text-white">{sectionTitle}</h2>
         <p className="mt-1 text-sm text-slate-300">
           {trimmedQuery
             ? `Showing direct anime results for "${trimmedQuery}".`
             : 'Scroll down to load more anime continuously.'}
         </p>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <label className="text-xs text-slate-300">
+            Year
+            <select
+              value={yearFilter}
+              onChange={(e) => setYearFilter(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white outline-none"
+            >
+              {yearOptions.map((year) => (
+                <option key={String(year)} value={String(year)} className="bg-slate-900">
+                  {year}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="text-xs text-slate-300">
+            Minimum Rating
+            <input
+              type="number"
+              min="0"
+              max="10"
+              step="0.1"
+              value={ratingFilter}
+              onChange={(e) => setRatingFilter(Math.max(0, Math.min(10, Number(e.target.value) || 0)))}
+              className="mt-1 w-full rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-white outline-none"
+            />
+          </label>
+        </div>
       </div>
 
       {loading && animeList.length === 0 && (
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: INITIAL_SKELETON_COUNT }).map((_, idx) => (
             <SkeletonCard key={`skeleton-initial-${idx}`} />
-=======
-        <h2 className="font-heading text-3xl font-semibold text-white">Anime Library</h2>
-        <p className="mt-1 text-sm text-slate-300">
-          {trimmedQuery
-            ? `Showing direct results for "${trimmedQuery}".`
-            : 'Showing top anime picks.'}
-        </p>
-      </div>
-
-      {loading && (
-        <div className="py-14 text-center">
-          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-slate-600 border-t-cyan-300" />
-          <p className="mt-3 text-slate-300">Loading anime...</p>
-        </div>
-      )}
-
-      {!loading && error && (
-        <div className="mt-6 rounded-2xl border border-rose-300/30 bg-rose-500/10 p-4 text-sm text-rose-200">
-          {error}
-        </div>
-      )}
-
-      {!loading && !error && displayAnime.length === 0 && (
-        <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
-          <p className="text-base text-slate-200">No anime found.</p>
-          <p className="mt-1 text-sm text-slate-400">Try another anime title in search.</p>
-        </div>
-      )}
-
-      {!loading && !error && displayAnime.length > 0 && (
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {displayAnime.map((anime) => (
-            <AnimeCard key={anime.id} anime={anime} />
->>>>>>> origin/main
           ))}
         </div>
       )}
@@ -211,16 +208,16 @@ export default function AnimeGrid({ searchQuery }) {
         </div>
       )}
 
-      {!loading && !error && animeList.length === 0 && (
+      {!loading && !error && filteredAnimeList.length === 0 && (
         <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
           <p className="text-base text-slate-200">No anime found.</p>
-          <p className="mt-1 text-sm text-slate-400">Try another anime title in search.</p>
+          <p className="mt-1 text-sm text-slate-400">Try changing search or filters.</p>
         </div>
       )}
 
-      {animeList.length > 0 && (
+      {filteredAnimeList.length > 0 && (
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {animeList.map((anime) => (
+          {filteredAnimeList.map((anime) => (
             <AnimeCard key={anime.id} anime={anime} />
           ))}
 

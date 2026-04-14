@@ -1,14 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { Search, Play, Menu, X, User, ChevronDown } from 'lucide-react'
-<<<<<<< HEAD
-=======
-
-const navItems = [
-  { label: 'Home', href: '#hero' },
-  { label: 'Trending', href: '#trending' },
-  { label: 'Library', href: '#library' }
-]
->>>>>>> origin/main
 
 const navItems = [
   { label: 'Home', href: '#hero' },
@@ -30,7 +21,6 @@ export default function Header({
 
   useEffect(() => {
     const onScroll = () => {
-<<<<<<< HEAD
       const currentY = window.scrollY || document.documentElement.scrollTop || 0
       const delta = currentY - lastScrollY.current
 
@@ -39,14 +29,6 @@ export default function Header({
       } else if (delta > 4) {
         setHiddenOnScroll(true)
       } else if (delta < -4) {
-=======
-      const currentY = window.scrollY
-      const isDown = currentY > lastScrollY.current
-
-      if (currentY > 90 && isDown) {
-        setHiddenOnScroll(true)
-      } else {
->>>>>>> origin/main
         setHiddenOnScroll(false)
       }
 
@@ -63,11 +45,7 @@ export default function Header({
   }
 
   return (
-<<<<<<< HEAD
     <header className={`fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-slate-950/85 backdrop-blur-xl transition-transform duration-300 will-change-transform ${hiddenOnScroll ? '-translate-y-full' : 'translate-y-0'}`}>
-=======
-    <header className={`sticky top-0 z-50 border-b border-white/10 bg-slate-950/85 backdrop-blur-xl transition-transform duration-300 ${hiddenOnScroll ? '-translate-y-full' : 'translate-y-0'}`}>
->>>>>>> origin/main
       <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <a href="#hero" className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-white transition hover:bg-white/10">
@@ -100,7 +78,6 @@ export default function Header({
             )}
           </div>
 
-<<<<<<< HEAD
           <div className="hidden md:block">
             <select
               value={selectedGenre}
@@ -115,8 +92,6 @@ export default function Header({
             </select>
           </div>
 
-=======
->>>>>>> origin/main
           <div className="relative ml-auto hidden w-full max-w-md md:block">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
@@ -155,7 +130,6 @@ export default function Header({
               />
             </div>
 
-<<<<<<< HEAD
             <select
               value={selectedGenre}
               onChange={(e) => setSelectedGenre(e.target.value)}
@@ -168,8 +142,6 @@ export default function Header({
               ))}
             </select>
 
-=======
->>>>>>> origin/main
             <nav className="grid gap-1">
               {navItems.map(({ label, href }) => (
                 <a
